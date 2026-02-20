@@ -2,4 +2,20 @@
 title: "hmk5_Vivi"
 format: html
 ---
-
+library(tidyverse)
+sample_df <- read_csv("data/sample_data.csv")
+colloq_df <- read_csv("data/colloquium_assessment.csv")
+colloq_long <- colloq_df %>%
+  pivot_longer(
+    cols = matches("^q[0-9]+"),
+    names_to = "question",
+    values_to = "score"
+)
+colloq_long <- colloq_long %>%
+  mutate(score = as.numeric(score))
+student_avg <- colloq_long %>%
+  filter(question %in% c("q7", "q8", "q9", "q10")) %>%
+  group_by(RecipientFirstName) %>%
+  summarise(
+    avg_score_q7_10 = mean(score, na.rm = TRUE)
+  )  
